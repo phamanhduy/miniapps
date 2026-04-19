@@ -38,4 +38,7 @@ export declare const config: {
     kimiDefaultMoonshotV1Model: string;
     isProduction: boolean;
 };
+export declare const projectRoot: string;
+export declare const uploadsDir: string;
+export declare const staticDir: string;
 //# sourceMappingURL=index.d.ts.map

@@ -31,6 +31,7 @@ export declare function sendTemplateAction(input: {
     senderType: string;
     senderUid: string | null;
     senderName: string | null;
+    senderAvatar: string | null;
     attachments: unknown;
     isDeleted: boolean;
     deletedAt: Date | null;
