@@ -26,6 +26,7 @@ export declare function sendTemplateAction(input: {
     id: string;
     createdAt: Date | null;
     updatedAt: Date | null;
+    sentAt: Date;
     conversationId: string;
     zaloMsgId: string | null;
     senderType: string;
@@ -35,7 +36,7 @@ export declare function sendTemplateAction(input: {
     attachments: unknown;
     isDeleted: boolean;
     deletedAt: Date | null;
-    sentAt: Date;
     repliedByUserId: string | null;
+    rawZaloMsg: string | null;
 } | null | undefined>;
 //# sourceMappingURL=send-template-action.d.ts.map

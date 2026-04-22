@@ -37,6 +37,8 @@ export declare const config: {
     kimiAuthToken: string;
     kimiDefaultMoonshotV1Model: string;
     zaloBulkMessageDelay: number;
+    zaloDailyLimit: number;
+    zaloBurstLimit: number;
     isProduction: boolean;
 };
 export declare const projectRoot: string;

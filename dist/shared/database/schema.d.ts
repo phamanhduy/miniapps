@@ -1039,6 +1039,25 @@ export declare const contacts: import("drizzle-orm/sqlite-core").SQLiteTableWith
         }, {}, {
             length: number | undefined;
         }>;
+        zaloAccountId: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "zalo_account_id";
+            tableName: "contacts";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
         diseaseCode: import("drizzle-orm/sqlite-core").SQLiteColumn<{
             name: "disease_code";
             tableName: "contacts";
@@ -1119,6 +1138,8 @@ export declare const contactsRelations: import("drizzle-orm").Relations<"contact
     assignedUser: import("drizzle-orm").One<"users", false>;
     conversations: import("drizzle-orm").Many<"conversations">;
     appointments: import("drizzle-orm").Many<"appointments">;
+    scheduledMessages: import("drizzle-orm").Many<"scheduled_messages">;
+    zaloAccount: import("drizzle-orm").One<"zalo_accounts", false>;
 }>;
 export declare const conversations: import("drizzle-orm/sqlite-core").SQLiteTableWithColumns<{
     name: "conversations";
@@ -1325,6 +1346,40 @@ export declare const conversations: import("drizzle-orm/sqlite-core").SQLiteTabl
         }, {}, {
             length: number | undefined;
         }>;
+        memberCount: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "member_count";
+            tableName: "conversations";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        metadata: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "metadata";
+            tableName: "conversations";
+            dataType: "json";
+            columnType: "SQLiteTextJson";
+            data: unknown;
+            driverParam: string;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         createdAt: import("drizzle-orm/sqlite-core").SQLiteColumn<{
             name: "created_at";
             tableName: "conversations";
@@ -1350,6 +1405,109 @@ export declare const conversationsRelations: import("drizzle-orm").Relations<"co
     zaloAccount: import("drizzle-orm").One<"zalo_accounts", false>;
     contact: import("drizzle-orm").One<"contacts", false>;
     messages: import("drizzle-orm").Many<"messages">;
+}>;
+export declare const orgTags: import("drizzle-orm/sqlite-core").SQLiteTableWithColumns<{
+    name: "org_tags";
+    schema: undefined;
+    columns: {
+        id: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "id";
+            tableName: "org_tags";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        orgId: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "org_id";
+            tableName: "org_tags";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        name: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "name";
+            tableName: "org_tags";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        color: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "color";
+            tableName: "org_tags";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        createdAt: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "created_at";
+            tableName: "org_tags";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+    };
+    dialect: "sqlite";
+}>;
+export declare const orgTagsRelations: import("drizzle-orm").Relations<"org_tags", {
+    org: import("drizzle-orm").One<"organizations", true>;
 }>;
 export declare const messages: import("drizzle-orm/sqlite-core").SQLiteTableWithColumns<{
     name: "messages";
@@ -1596,6 +1754,25 @@ export declare const messages: import("drizzle-orm/sqlite-core").SQLiteTableWith
         }, {}, {}>;
         repliedByUserId: import("drizzle-orm/sqlite-core").SQLiteColumn<{
             name: "replied_by_user_id";
+            tableName: "messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        rawZaloMsg: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "raw_zalo_msg";
             tableName: "messages";
             dataType: "string";
             columnType: "SQLiteText";
@@ -4402,6 +4579,258 @@ export declare const messageBlockItems: import("drizzle-orm/sqlite-core").SQLite
         }, {}, {}>;
     };
     dialect: "sqlite";
+}>;
+export declare const scheduledMessages: import("drizzle-orm/sqlite-core").SQLiteTableWithColumns<{
+    name: "scheduled_messages";
+    schema: undefined;
+    columns: {
+        id: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "id";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        orgId: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "org_id";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        contactId: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "contact_id";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        zaloAccountId: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "zalo_account_id";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        type: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "type";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        content: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "content";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        blockId: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "block_id";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        scheduledAt: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "scheduled_at";
+            tableName: "scheduled_messages";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        status: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "status";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        sentAt: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "sent_at";
+            tableName: "scheduled_messages";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        errorMessage: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "error_message";
+            tableName: "scheduled_messages";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        createdAt: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "created_at";
+            tableName: "scheduled_messages";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        updatedAt: import("drizzle-orm/sqlite-core").SQLiteColumn<{
+            name: "updated_at";
+            tableName: "scheduled_messages";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+    };
+    dialect: "sqlite";
+}>;
+export declare const scheduledMessagesRelations: import("drizzle-orm").Relations<"scheduled_messages", {
+    org: import("drizzle-orm").One<"organizations", true>;
+    contact: import("drizzle-orm").One<"contacts", true>;
+    zaloAccount: import("drizzle-orm").One<"zalo_accounts", true>;
+    block: import("drizzle-orm").One<"message_blocks", false>;
 }>;
 export declare const messageGroupsRelations: import("drizzle-orm").Relations<"message_groups", {
     blocks: import("drizzle-orm").Many<"message_blocks">;

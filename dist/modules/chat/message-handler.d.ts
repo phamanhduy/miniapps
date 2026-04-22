@@ -13,6 +13,7 @@ export interface IncomingMessage {
     avatarUrl?: string;
     groupAvatar?: string;
     attachments?: any[];
+    rawData?: any;
 }
 export interface HandleMessageResult {
     message: any;

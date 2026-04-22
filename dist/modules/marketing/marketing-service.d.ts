@@ -23,6 +23,7 @@ export declare class MarketingService {
         leadScore: number;
         lastActivity: Date | null;
         mergedInto: string | null;
+        zaloAccountId: string | null;
         diseaseCode: string | null;
         diseaseName: string | null;
     }[]>;
