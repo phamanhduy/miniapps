@@ -10,7 +10,10 @@ export interface IncomingMessage {
     threadId: string;
     threadType: 'user' | 'group';
     groupName?: string;
+    avatarUrl?: string;
+    groupAvatar?: string;
     attachments?: any[];
+    rawData?: any;
 }
 export interface HandleMessageResult {
     message: any;
@@ -20,4 +23,5 @@ export interface HandleMessageResult {
 }
 export declare function handleIncomingMessage(msg: IncomingMessage): Promise<HandleMessageResult | null>;
 export declare function handleMessageUndo(accountId: string, zaloMsgId: string): Promise<void>;
+export declare function handleFriendRequest(accountId: string, data: any): Promise<void>;
 //# sourceMappingURL=message-handler.d.ts.map

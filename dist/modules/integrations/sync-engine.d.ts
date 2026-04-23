@@ -8,10 +8,10 @@ export declare function runSync(integration: Integration): Promise<{
     status: string;
     id: string;
     createdAt: Date | null;
+    errorMessage: string | null;
     integrationId: string;
     direction: string;
     recordCount: number;
-    errorMessage: string | null;
 } | {
     integrationId: string;
     direction: "import" | "export";

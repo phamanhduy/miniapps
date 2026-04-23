@@ -4,17 +4,11 @@
  * Extracted from ZaloAccountPool to keep zalo-pool.ts under 200 lines.
  */
 import type { Server } from 'socket.io';
-export interface UserInfoCacheEntry {
-    zaloName: string;
-    avatar: string;
-    phone?: string;
-    cachedAt: number;
-}
 export interface ListenerContext {
     accountId: string;
     api: any;
     io: Server | null;
-    userInfoCache: Map<string, UserInfoCacheEntry>;
+    userInfoCache?: Map<string, any>;
     onDisconnected: (accountId: string) => void;
 }
 /**
