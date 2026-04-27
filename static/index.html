@@ -10,34 +10,80 @@
   <meta name="theme-color" content="#0A192F" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
   <title>ZaloCRM</title>
-  <script type="module" crossorigin src="/assets/index-EKoQv-dj.js"></script>
+  <style>
+    :root {
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html,
+    body {
+      overscroll-behavior-y: none;
+      overscroll-behavior: none;
+      height: 100%;
+      height: 100dvh;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      overflow: hidden;
+    }
+
+    #app {
+      height: 100%;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-DY8wHxx0.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/api-Bw1s78tG.js">
-  <link rel="modulepreload" crossorigin href="/assets/esm-DO-YFLIs.js">
+  <link rel="modulepreload" crossorigin href="/assets/esm-C_F0d5OX.js">
   <link rel="modulepreload" crossorigin href="/assets/ripple-InvIDFDU.js">
   <link rel="modulepreload" crossorigin href="/assets/pinia-BTNooktX.js">
   <link rel="modulepreload" crossorigin href="/assets/intersect-DlicuJeM.js">
-  <link rel="modulepreload" crossorigin href="/assets/VAvatar-kHMyIrne.js">
-  <link rel="modulepreload" crossorigin href="/assets/VBtn-DA6gIEkJ.js">
-  <link rel="modulepreload" crossorigin href="/assets/VTextField-U76creWs.js">
+  <link rel="modulepreload" crossorigin href="/assets/VAvatar-DNvoHmJu.js">
+  <link rel="modulepreload" crossorigin href="/assets/VBtn-BQbXgYUE.js">
+  <link rel="modulepreload" crossorigin href="/assets/forwardRefs-BCJBnjVo.js">
   <link rel="modulepreload" crossorigin href="/assets/goto-GhSnEcDV.js">
-  <link rel="modulepreload" crossorigin href="/assets/VSpacer-LBySPaAr.js">
-  <link rel="modulepreload" crossorigin href="/assets/VSelect-CVJgk10H.js">
-  <link rel="modulepreload" crossorigin href="/assets/VDataTable-CsGZZIno.js">
-  <link rel="modulepreload" crossorigin href="/assets/VDialog-ClUzUj9U.js">
+  <link rel="modulepreload" crossorigin href="/assets/VDivider-BNJ1R038.js">
+  <link rel="modulepreload" crossorigin href="/assets/VTextField-Dc03NZJz.js">
+  <link rel="modulepreload" crossorigin href="/assets/VList-DWEGpfkJ.js">
+  <link rel="modulepreload" crossorigin href="/assets/VSelect-3D5UxUdB.js">
+  <link rel="modulepreload" crossorigin href="/assets/VDataTable-VyaSBLzI.js">
+  <link rel="modulepreload" crossorigin href="/assets/VDialog-Yczkt8CN.js">
+  <link rel="modulepreload" crossorigin href="/assets/system-69nepDDI.js">
   <link rel="stylesheet" crossorigin href="/assets/ripple-B-jKMnf_.css">
-  <link rel="stylesheet" crossorigin href="/assets/VAvatar-cDdpN1Wr.css">
+  <link rel="stylesheet" crossorigin href="/assets/VAvatar-Dlap4iSp.css">
   <link rel="stylesheet" crossorigin href="/assets/VBtn-DVk1M-qx.css">
-  <link rel="stylesheet" crossorigin href="/assets/VTextField-JW7kNFH4.css">
-  <link rel="stylesheet" crossorigin href="/assets/VSpacer-BIUD5jJz.css">
-  <link rel="stylesheet" crossorigin href="/assets/VSelect-D5lFZkSi.css">
-  <link rel="stylesheet" crossorigin href="/assets/VDataTable-DlpDfCoY.css">
+  <link rel="stylesheet" crossorigin href="/assets/forwardRefs-BsP73X2A.css">
+  <link rel="stylesheet" crossorigin href="/assets/VDivider-DcUH6Vor.css">
+  <link rel="stylesheet" crossorigin href="/assets/VTextField-DWGuul9P.css">
+  <link rel="stylesheet" crossorigin href="/assets/VList-yWX8ltdb.css">
+  <link rel="stylesheet" crossorigin href="/assets/VSelect-DYINZHg_.css">
+  <link rel="stylesheet" crossorigin href="/assets/VDataTable-BuBT0ria.css">
   <link rel="stylesheet" crossorigin href="/assets/VDialog-DP-kc9Gx.css">
-  <link rel="stylesheet" crossorigin href="/assets/index-BBOdW2_8.css">
-</head>
+  <link rel="stylesheet" crossorigin href="/assets/index-D9XrZUiW.css">
+<link rel="manifest" href="/manifest.webmanifest"></head>
 
 <body>
-  <div id="app"></div>
+  <div id="app"></div>
+  <script>
+    // Aggressive pull-to-refresh prevention
+    document.addEventListener('touchmove', function (e) {
+      if (e.touches.length > 1) return; // Allow pinch-to-zoom
+      // Only prevent if we're at the very top and pulling down
+      if (window.pageYOffset === 0 && e.touches[0].clientY > 0) {
+        // This can be risky if internal scrolls need it, 
+        // but overscroll-behavior: none above should handle most cases.
+      }
+    }, { passive: false });
+  </script>
 </body>
 
 </html>
