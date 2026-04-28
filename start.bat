@@ -49,8 +49,8 @@ echo.
 echo [1/3] Khoi dong MariaDB...
 start "MariaDB" /b "%ROOT_PATH%mysql\bin\mysqld.exe" --defaults-file="%ROOT_PATH%mysql\my.ini" --datadir="%ROOT_PATH%mysql\data" --standalone
 
-:: Tao database cho WordPress neu chua co
-timeout /t 3 /nobreak > nul
+:: Cho 3 giay de MariaDB kip khoi dong
+ping -n 4 127.0.0.1 > nul
 "%ROOT_PATH%mysql\bin\mysql.exe" -u root -e "CREATE DATABASE IF NOT EXISTS %DB_NAME% CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >nul 2>&1
 
 echo [2/3] Khoi dong PHP FastCGI (4 Workers)...
@@ -74,6 +74,11 @@ echo -------------------------------------------------------
 echo.
 
 :MONITOR
+if exist "%ROOT_PATH%stop.flag" (
+    echo [%time%] [INFO] Nhan duoc lenh dung. Dang thoat watchdog...
+    del "%ROOT_PATH%stop.flag" >nul 2>&1
+    exit
+)
 :: Kiem tra MariaDB
 tasklist /fi "imagename eq mysqld.exe" | find ":" > nul
 if %errorlevel% equ 0 (
@@ -120,5 +125,5 @@ if %errorlevel% equ 0 (
 )
 
 :: Cho 10 giay truoc khi kiem tra lai
-timeout /t 10 /nobreak > nul
+ping -n 11 127.0.0.1 > nul
 goto MONITOR
