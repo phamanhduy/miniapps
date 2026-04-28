@@ -1,1 +1,0 @@
-{"version":3,"file":"reply-draft.js","sourceRoot":"","sources":["../../../../src/modules/ai/prompts/reply-draft.ts"],"names":[],"mappings":"AAAA,MAAM,UAAU,qBAAqB,CAAC,QAAqB;IACzD,OAAO;QACL,mDAAmD;QACnD,sCAAsC;QACtC,4FAA4F;QAC5F,2GAA2G;QAC3G,yEAAyE;QACzE,QAAQ,KAAK,IAAI;YACf,CAAC,CAAC,4GAA4G;YAC9G,CAAC,CAAC,iEAAiE;QACrE,yBAAyB;KAC1B,CAAC,IAAI,CAAC,GAAG,CAAC,CAAC;AACd,CAAC"}

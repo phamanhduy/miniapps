@@ -1,19 +1,19 @@
 @echo off
-setlocal enabledelayedexpansion
+title Stop Portable WordPress
+echo =======================================================
+echo    DANG DONG CAC DICH VU WORDPRESS...
+echo =======================================================
 
-:: Get PORT from .env
-for /f "tokens=2 delims==" %%a in ('findstr "PORT=" .env') do set PORT=%%a
+echo Dang tat Nginx...
+taskkill /f /im nginx.exe >nul 2>&1
 
-if "%PORT%"=="" (
-    echo No PORT found in .env
-    pause
-    exit /b
-)
+echo Dang tat PHP...
+taskkill /f /im php-cgi.exe >nul 2>&1
 
-echo Closing port %PORT%...
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :%PORT% ^| findstr LISTENING') do (
-    taskkill /F /PID %%a
-)
+echo Dang tat MariaDB...
+taskkill /f /im mysqld.exe >nul 2>&1
 
-echo Done.
-pause
+echo.
+echo Da dong tat ca dich vu an toan.
+echo Tam biet!
+timeout /t 3
