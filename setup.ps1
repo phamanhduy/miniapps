@@ -76,6 +76,29 @@ if ((Test-Path $wpSample) -and -not (Test-Path $wpConfig)) {
     }
     
     (Get-Content $wpSample) -replace 'database_name_here', $DB_NAME -replace 'username_here', $DB_USER -replace 'password_here', $DB_PASS | Set-Content $wpConfig
+
+    Write-Host "--- Them cau hinh Proxy va Cloudflare Tunnel vao wp-config.php ..." -ForegroundColor Yellow
+    $proxyConfig = @'
+/* --- Cấu hình hỗ trợ Proxy và Cloudflare Tunnel --- */
+// 1. Nhận diện giao thức HTTPS từ Proxy
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+// 2. Tự động cấu hình URL động khi truy cập qua Domain ngoài
+if (isset($_SERVER['HTTP_HOST'])) {
+    $http_host = $_SERVER['HTTP_HOST'];
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+    
+    // Nếu truy cập từ domain ngoài (không chứa localhost / 127.0.0.1)
+    if (strpos($http_host, 'localhost') === false && strpos($http_host, '127.0.0.1') === false) {
+        define('WP_HOME', $protocol . $http_host);
+        define('WP_SITEURL', $protocol . $http_host);
+    }
+}
+
+require_once ABSPATH . 'wp-settings.php';
+'@
+    (Get-Content $wpConfig) -replace "require_once ABSPATH \. 'wp-settings\.php';", $proxyConfig | Set-Content $wpConfig
 }
 
 Write-Host "`n=== HOAN TAT THIET LAP! ===" -ForegroundColor Green
