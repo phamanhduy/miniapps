@@ -98,7 +98,11 @@ if (isset($_SERVER['HTTP_HOST'])) {
 
 require_once ABSPATH . 'wp-settings.php';
 '@
-    (Get-Content $wpConfig) -replace "require_once ABSPATH \. 'wp-settings\.php';", $proxyConfig | Set-Content $wpConfig
+    $content = Get-Content $wpConfig -Raw
+    if ($content) {
+        $content = $content.Replace("require_once ABSPATH . 'wp-settings.php';", $proxyConfig)
+        Set-Content -Path $wpConfig -Value $content -NoNewline
+    }
 }
 
 Write-Host "`n=== HOAN TAT THIET LAP! ===" -ForegroundColor Green
