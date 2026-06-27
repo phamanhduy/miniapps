@@ -54,7 +54,27 @@ $phpIni = Join-Path $root "php\php.ini"
 $phpIniDev = Join-Path $root "php\php.ini-development"
 if (Test-Path $phpIniDev) {
     Copy-Item $phpIniDev $phpIni -Force
-    (Get-Content $phpIni) -replace ';extension_dir = "ext"', 'extension_dir = "ext"' -replace ';extension=mysqli', 'extension=mysqli' -replace ';extension=mbstring', 'extension=mbstring' -replace ';extension=curl', 'extension=curl' -replace ';extension=gd', 'extension=gd' -replace ';extension=zip', 'extension=zip' | Set-Content $phpIni
+    (Get-Content $phpIni) `
+        -replace ';extension_dir = "ext"', 'extension_dir = "ext"' `
+        -replace ';extension=mysqli', 'extension=mysqli' `
+        -replace ';extension=mbstring', 'extension=mbstring' `
+        -replace ';extension=curl', 'extension=curl' `
+        -replace ';extension=gd', 'extension=gd' `
+        -replace ';extension=zip', 'extension=zip' `
+        -replace ';zend_extension=opcache', 'zend_extension=opcache' `
+        | Set-Content $phpIni
+
+    $opcacheSettings = @"
+
+[opcache]
+opcache.enable=1
+opcache.enable_cli=1
+opcache.memory_consumption=128
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=10000
+opcache.revalidate_freq=2
+"@
+    Add-Content -Path $phpIni -Value $opcacheSettings
 }
 
 # 5. Tai va thiet lap WordPress
@@ -75,7 +95,12 @@ if ((Test-Path $wpSample) -and -not (Test-Path $wpConfig)) {
         }
     }
     
-    (Get-Content $wpSample) -replace 'database_name_here', $DB_NAME -replace 'username_here', $DB_USER -replace 'password_here', $DB_PASS | Set-Content $wpConfig
+    (Get-Content $wpSample) `
+        -replace 'database_name_here', $DB_NAME `
+        -replace 'username_here', $DB_USER `
+        -replace 'password_here', $DB_PASS `
+        -replace "'localhost'", "'127.0.0.1'" `
+        | Set-Content $wpConfig
 
     Write-Host "--- Them cau hinh Proxy va Cloudflare Tunnel vao wp-config.php ..." -ForegroundColor Yellow
     $proxyConfig = @'

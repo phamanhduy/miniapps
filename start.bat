@@ -73,6 +73,8 @@ echo Cua so nay dang theo doi de tu dong restart neu server bi sap.
 echo -------------------------------------------------------
 echo.
 
+set "WARM_COUNTER=0"
+
 :MONITOR
 if exist "%ROOT_PATH%stop.flag" (
     echo [%time%] [INFO] Nhan duoc lenh dung. Dang thoat watchdog...
@@ -122,6 +124,16 @@ if %errorlevel% equ 0 (
     pushd "%ROOT_PATH%nginx"
     start "Nginx" /b "nginx.exe" -p "%ROOT_PATH%nginx"
     popd
+)
+
+:: Giu am server de tranh Windows page-out memory luc idle (moi ~2 phut)
+set /a WARM_COUNTER+=1
+if !WARM_COUNTER! geq 12 (
+    set WARM_COUNTER=0
+    where curl >nul 2>&1
+    if !errorlevel! equ 0 (
+        curl -s -o nul http://127.0.0.1:%PORT%/
+    )
 )
 
 :: Cho 10 giay truoc khi kiem tra lai
