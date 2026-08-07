@@ -101,22 +101,30 @@ const start = async () => {
     const engineBin = path.join(appConfig.SYSTEM_PREFIX_FOLDER, 'node_modules', 'n8n', 'bin', 'n8n');
     const npmCliPath = path.join(nodeBinDir || '', 'node_modules', 'npm', 'bin', 'npm-cli.js');
 
+    const handleLogData = (data) => {
+        const lines = data.toString().split('\n');
+        lines.forEach(line => {
+            if (line.trim()) sendLog(line.trim(), 'info');
+        });
+    };
+
     if (fs.existsSync(engineBin)) {
         sendLog('Phát hiện n8n core, đang kích hoạt...', 'info');
         engineProcess = spawn(nodePath, [engineBin, 'start'], { env, cwd: appConfig.ENGINE_USER_FOLDER });
     } else {
-        sendLog('Cài đặt n8n package lần đầu tiên vào thư mục Mini App...', 'warning');
+        sendLog('Cài đặt n8n package lần đầu tiên vào thư mục Mini App (npm install n8n sqlite3)... Vui lòng đợi trong vài phút.\r\n', 'warning');
         const installProcess = spawn(nodePath, [
             npmCliPath, 'install',
             '--prefix', appConfig.SYSTEM_PREFIX_FOLDER,
             '--no-workspaces',
             '--no-package-lock',
+            '--loglevel=info', // Force npm to output detailed installation logs
             'n8n@2.14.2',
             'sqlite3@5.1.7'
         ], { env, cwd: appConfig.ENGINE_USER_FOLDER });
 
-        installProcess.stdout.on('data', (d) => sendLog(d.toString(), 'info'));
-        installProcess.stderr.on('data', (d) => sendLog(d.toString(), 'info'));
+        installProcess.stdout.on('data', handleLogData);
+        installProcess.stderr.on('data', handleLogData);
 
         const code = await new Promise((r) => installProcess.on('close', r));
         if (code !== 0 || !fs.existsSync(engineBin)) {
@@ -126,13 +134,13 @@ const start = async () => {
             return { success: false, error: 'Install failed' };
         }
 
-        sendLog('Cài đặt n8n thành công! Đang kích hoạt...', 'info');
+        sendLog('Cài đặt n8n thành công! Đang kích hoạt máy chủ n8n...', 'info');
         engineProcess = spawn(nodePath, [engineBin, 'start'], { env, cwd: appConfig.ENGINE_USER_FOLDER });
     }
 
     let isReady = false;
-    engineProcess.stdout.on('data', (d) => sendLog(d.toString(), 'info'));
-    engineProcess.stderr.on('data', (d) => sendLog(d.toString(), 'info'));
+    engineProcess.stdout.on('data', handleLogData);
+    engineProcess.stderr.on('data', handleLogData);
 
     engineProcess.on('close', (code) => {
         engineProcess = null;
@@ -141,12 +149,16 @@ const start = async () => {
         sendLog(`Tiến trình n8n đã dừng (code ${code})`, 'info');
     });
 
-    // Check port ready
-    for (let i = 0; i < 30; i++) {
+    // Check port ready (Increase wait attempts to 90 iterations = 3 minutes for first-time SQLite setup)
+    sendLog('Đang đợi máy chủ N8N phản hồi trên cổng...', 'info');
+    for (let i = 0; i < 90; i++) {
         await new Promise(r => setTimeout(r, 2000));
         if (await checkPort()) {
             isReady = true;
             break;
+        }
+        if (i > 0 && i % 10 === 0) {
+            sendLog(`Vẫn đang kiểm tra kết nối cổng ${port}...`, 'info');
         }
     }
 
