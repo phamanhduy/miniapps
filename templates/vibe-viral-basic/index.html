@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeViral | Tăng trưởng Đột phá cùng AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="glass-container">
+        <nav>
+            <div class="logo">
+                <i data-lucide="zap" class="icon-zap"></i>
+                <span>VibeViral</span>
+            </div>
+        </nav>
+
+        <main>
+            <div class="hero">
+                <h1 class="animate-up">Biến Ý tưởng thành <span class="gradient-text">Viral Video</span></h1>
+                <p class="animate-up delay-1">Hệ thống AI tự động hóa quy trình sáng tạo, từ kịch bản đến video 3D hoàn
+                    chỉnh chỉ trong vài phút.</p>
+            </div>
+
+            <div class="form-container animate-up delay-2">
+                <h3>Trải nghiệm ngay bản dùng thử</h3>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="email" placeholder="Email của bạn..." required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i data-lucide="message-square"></i>
+                        <textarea id="topic" placeholder="Chủ đề video bạn muốn tạo..." rows="3"></textarea>
+                    </div>
+                </div>
+                <button id="submit-btn">
+                    <span>Gửi yêu cầu ngay</span>
+                    <i data-lucide="chevron-right"></i>
+                </button>
+            </div>
+
+            <div id="status-message" class="status-message"></div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 VibeViral AI. Powered by AutoPilot Manager.</p>
+        </footer>
+    </div>
+
+    <!-- Cầu nối với n8n system -->
+    <script src="../bridge.js"></script>
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

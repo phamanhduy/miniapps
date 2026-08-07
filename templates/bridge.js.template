@@ -1,0 +1,84 @@
+/**
+ * Bridge.js - Standard Connection Bridge for Mini Apps
+ * Universal version (CJS & ESM compatible)
+ */
+const fs = require('fs');
+const path = require('path');
+
+const bridge = {
+    securityHandle: null,
+    isConnected: false,
+    appId: null,
+    db: null,
+
+    connect: function() {
+        try {
+            const handleIdEnv = process.env.VEO_BRIDGE_HANDLE;
+            const handleFile = path.join(process.cwd(), '.veo_handle');
+            
+            if (!handleIdEnv) throw new Error('VEO_BRIDGE_HANDLE missing');
+            if (!fs.existsSync(handleFile)) throw new Error('.veo_handle file not found');
+
+            const handleContent = JSON.parse(fs.readFileSync(handleFile, 'utf8'));
+            if (handleContent.handleId !== handleIdEnv) {
+                throw new Error('Invalid security handle ID');
+            }
+
+            this.securityHandle = handleContent;
+            this.appId = handleContent.appId;
+            this.isConnected = true;
+
+            console.log(`[Bridge] Connected successfully for App: ${this.appId}`);
+            return true;
+        } catch (error) {
+            console.error('[Bridge] Connection Error:', error.message);
+            process.exit(1);
+        }
+    },
+
+    // Bridge standard handle for DB Proxy
+    handle: async function({ sql, params, method }) {
+        if (!this.isConnected) throw new Error('Bridge not connected');
+        
+        const isElectron = typeof window !== 'undefined' && window.electron;
+        
+        if (isElectron) {
+            return await window.electron.ipcRenderer.invoke('mini-app:db-proxy', {
+                appId: this.appId, handleId: this.securityHandle.handleId, payload: { sql, params, method }
+            });
+        } else {
+            const port = process.env.VEO_BRIDGE_PORT;
+            if (!port) throw new Error("VEO_BRIDGE_PORT missing");
+
+            return new Promise((resolve, reject) => {
+                const http = require('http');
+                const postData = JSON.stringify({
+                    appId: this.appId, handleId: this.securityHandle.handleId, payload: { sql, params, method }
+                });
+                const req = http.request({
+                    hostname: '127.0.0.1', port: port, path: '/db-proxy', method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postData) }
+                }, (res) => {
+                    let data = '';
+                    res.on('data', (chunk) => data += chunk);
+                    res.on('end', () => {
+                        try {
+                            const json = JSON.parse(data);
+                            resolve(json);
+                        } catch (e) { reject(e); }
+                    });
+                });
+                req.on('error', reject);
+                req.write(postData);
+                req.end();
+            });
+        }
+    },
+
+    // Backward compatibility for old initDrizzle calls
+    initDrizzle: function(drizzle, options = {}) {
+        return this.handle.bind(this);
+    }
+};
+
+module.exports = bridge;
