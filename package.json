@@ -1,0 +1,24 @@
+{
+    "name":  "autopilot-manager",
+    "version":  "1.0.53",
+    "main":  "index.js",
+    "scripts":  {
+                    "start":  "node dist-backend/index.js"
+                },
+    "dependencies":  {
+                         "axios":  "^1.13.6",
+                         "better-sqlite3":  "^13.0.3",
+                         "cors":  "^2.8.6",
+                         "drizzle-orm":  "^0.45.2",
+                         "express":  "^5.2.1",
+                         "jsonwebtoken":  "^9.0.3",
+                         "lucide-react":  "^0.300.0",
+                         "node-machine-id":  "^1.1.12",
+                         "react":  "^18.2.0",
+                         "react-dom":  "^18.2.0",
+                         "react-router-dom":  "^7.18.2",
+                         "socket.io":  "^4.8.3",
+                         "socket.io-client":  "^4.8.3"
+                     },
+    "devDependencies":  null
+}
