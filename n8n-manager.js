@@ -162,13 +162,24 @@ const start = async () => {
         sendLog('Phát hiện n8n core, đang kích hoạt...', 'info');
         engineProcess = spawn(nodePath, [engineBin, 'start'], { env, cwd: appConfig.ENGINE_USER_FOLDER });
     } else {
-        sendLog('Chưa tìm thấy nhân n8n core. Bắt đầu tải và cài đặt n8n package từ server (npm install n8n sqlite3)... Vui lòng đợi trong vài phút.\r\n', 'warning');
+        sendLog('Chưa tìm thấy nhân n8n core. Bắt đầu tải và cấu hình thư viện cục bộ...', 'warning');
+        sendLog('Đang chuẩn bị tải thư viện n8n, vui lòng chờ trong giây lát...', 'info');
 
         let npmCmd = 'npm';
+        // Resolve correct npm command (prefer project portable npm.cmd, fallback to global npm)
         const possibleNpmCmd = path.join(nodeBinDir || '', 'npm.cmd');
         if (fs.existsSync(possibleNpmCmd)) {
             npmCmd = possibleNpmCmd;
+        } else {
+            // Check if portable npm exists in root package bin
+            const rootDir = path.resolve(appConfig.APP_DIR, '..', '..');
+            const rootPortableNpm = path.join(rootDir, 'bin', 'node', 'npm.cmd');
+            if (fs.existsSync(rootPortableNpm)) {
+                npmCmd = rootPortableNpm;
+            }
         }
+
+        sendLog(`Sử dụng trình quản lý gói: ${npmCmd}`, 'info');
 
         const installProcess = spawn(npmCmd, [
             'install',
