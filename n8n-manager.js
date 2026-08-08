@@ -75,6 +75,50 @@ const start = async () => {
     sendStatus();
     sendLog(`Khởi động N8N Mini App trên port ${port}...`, 'info');
 
+    // Tự động kéo/di chuyển các thư mục dữ liệu cũ của n8n từ Autopilot_Data về thư mục Apps/n8n/data nếu tồn tại
+    try {
+        const rootDir = path.resolve(appConfig.APP_DIR, '..', '..');
+        const ROOT_DATA = path.join(rootDir, 'Autopilot_Data');
+        const oldEngineFolder = path.join(ROOT_DATA, 'Engine_Data');
+        const oldSystemFolder = path.join(ROOT_DATA, 'System');
+        const oldCacheFolder = path.join(ROOT_DATA, 'Cache');
+
+        const moveDir = (src, dest) => {
+            if (fs.existsSync(src) && !fs.existsSync(dest)) {
+                try {
+                    const destParent = path.dirname(dest);
+                    if (!fs.existsSync(destParent)) fs.mkdirSync(destParent, { recursive: true });
+                    fs.renameSync(src, dest);
+                    sendLog(`[System] Đã chuyển thư mục ${path.basename(src)} sang ${dest}`);
+                } catch (e) {
+                    try {
+                        fs.cpSync(src, dest, { recursive: true });
+                        fs.rmSync(src, { recursive: true, force: true });
+                        sendLog(`[System] Đã di chuyển thư mục ${path.basename(src)} sang ${dest}`);
+                    } catch (err) { }
+                }
+            }
+        };
+
+        moveDir(oldEngineFolder, appConfig.ENGINE_USER_FOLDER);
+        moveDir(oldSystemFolder, appConfig.SYSTEM_PREFIX_FOLDER);
+        moveDir(oldCacheFolder, appConfig.CACHE_FOLDER);
+    } catch (e) { }
+
+    // Load configs from Autopilot root dynamically
+    let n8nApiKey = '';
+    let webhookUrl = '';
+    try {
+        const rootDir = path.resolve(appConfig.APP_DIR, '..', '..');
+        const n8nUtils = require(path.join(rootDir, 'system-utils.js'));
+        const config = n8nUtils.loadConfig();
+        n8nApiKey = config.n8n_api_key || '';
+        const tunnelUrl = config.current_public_url || config.tunnel_url;
+        if (tunnelUrl) {
+            webhookUrl = tunnelUrl.startsWith('http') ? tunnelUrl : `https://${tunnelUrl}`;
+        }
+    } catch (e) { }
+
     const { nodePath, nodeBinDir } = appConfig.getNodePath();
     const env = {
         ...process.env,
@@ -84,13 +128,19 @@ const start = async () => {
         N8N_ENCRYPTION_KEY: process.env.N8N_ENCRYPTION_KEY || 'n8n_miniapp_secret_key_veo3',
         N8N_BLOCK_EXECUTE_COMMAND: 'false',
         N8N_BLOCK_FS_WRITE_ACCESS: 'false',
+        N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: 'false',
         NODE_FUNCTION_ALLOW_BUILTIN: 'fs,path,child_process',
         NODE_FUNCTION_ALLOW_EXTERNAL: '*',
         DB_TYPE: 'sqlite',
         DB_SQLITE_DATADIR: appConfig.ENGINE_USER_FOLDER,
         npm_config_cache: appConfig.CACHE_FOLDER,
         npm_config_prefix: appConfig.SYSTEM_PREFIX_FOLDER,
+        N8N_API_KEY: n8nApiKey
     };
+
+    if (webhookUrl) {
+        env.WEBHOOK_URL = webhookUrl;
+    }
 
     if (nodeBinDir) {
         const existingPath = process.env.PATH || process.env.Path || '';
@@ -112,29 +162,49 @@ const start = async () => {
         sendLog('Phát hiện n8n core, đang kích hoạt...', 'info');
         engineProcess = spawn(nodePath, [engineBin, 'start'], { env, cwd: appConfig.ENGINE_USER_FOLDER });
     } else {
-        sendLog('Cài đặt n8n package lần đầu tiên vào thư mục Mini App (npm install n8n sqlite3)... Vui lòng đợi trong vài phút.\r\n', 'warning');
-        const installProcess = spawn(nodePath, [
-            npmCliPath, 'install',
+        sendLog('Chưa tìm thấy nhân n8n core. Bắt đầu tải và cài đặt n8n package từ server (npm install n8n sqlite3)... Vui lòng đợi trong vài phút.\r\n', 'warning');
+
+        let npmCmd = 'npm';
+        const possibleNpmCmd = path.join(nodeBinDir || '', 'npm.cmd');
+        if (fs.existsSync(possibleNpmCmd)) {
+            npmCmd = possibleNpmCmd;
+        }
+
+        const installProcess = spawn(npmCmd, [
+            'install',
             '--prefix', appConfig.SYSTEM_PREFIX_FOLDER,
             '--no-workspaces',
             '--no-package-lock',
-            '--loglevel=info', // Force npm to output detailed installation logs
+            '--loglevel=info',
             'n8n@2.14.2',
             'sqlite3@5.1.7'
-        ], { env, cwd: appConfig.ENGINE_USER_FOLDER });
+        ], { env, cwd: appConfig.ENGINE_USER_FOLDER, shell: true });
 
-        installProcess.stdout.on('data', handleLogData);
-        installProcess.stderr.on('data', handleLogData);
+        installProcess.stdout.on('data', (data) => {
+            const text = data.toString().trim();
+            if (text) sendLog(text, 'info');
+        });
+
+        installProcess.stderr.on('data', (data) => {
+            const text = data.toString().trim();
+            if (text) {
+                if (text.toLowerCase().includes('err!')) {
+                    sendLog(text, 'error');
+                } else {
+                    sendLog(text, 'info');
+                }
+            }
+        });
 
         const code = await new Promise((r) => installProcess.on('close', r));
         if (code !== 0 || !fs.existsSync(engineBin)) {
             engineStatus = 'error';
             sendStatus();
-            sendLog('Cài đặt n8n thất bại.', 'error');
+            sendLog('Cài đặt n8n package thất bại. Vui lòng kiểm tra lại kết nối mạng.', 'error');
             return { success: false, error: 'Install failed' };
         }
 
-        sendLog('Cài đặt n8n thành công! Đang kích hoạt máy chủ n8n...', 'info');
+        sendLog('Cài đặt n8n thành công! Đang tiến hành kích hoạt máy chủ n8n...', 'info');
         engineProcess = spawn(nodePath, [engineBin, 'start'], { env, cwd: appConfig.ENGINE_USER_FOLDER });
     }
 
