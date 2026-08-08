@@ -35,9 +35,8 @@ const sendLog = (message, type = 'info') => {
         fs.appendFileSync(LOG_FILE, `[${logEntry.timestamp}] [${logEntry.type.toUpperCase()}] ${logEntry.message}\n`, 'utf8');
     } catch (e) { }
 
-    if (global.io) {
-        global.io.emit('mini-app:log:n8n', logEntry.message);
-    }
+    // Output to stdout so parent process can capture and emit socket event
+    process.stdout.write(`${logEntry.message}\n`);
 };
 
 const checkPort = () => {
