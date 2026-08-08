@@ -158,11 +158,28 @@ const start = async () => {
         });
     };
 
-    if (fs.existsSync(engineBin)) {
-        sendLog('Phát hiện n8n core, đang kích hoạt...', 'info');
+    // State checking using status.json to ensure correct install/run path
+    const statusFile = path.join(appConfig.DATA_DIR, 'status.json');
+    let installStatus = 'not_installed';
+    if (fs.existsSync(statusFile)) {
+        try {
+            const statusObj = JSON.parse(fs.readFileSync(statusFile, 'utf8'));
+            installStatus = statusObj.status || 'not_installed';
+        } catch (e) { }
+    }
+
+    const saveStatus = (status) => {
+        try {
+            fs.writeFileSync(statusFile, JSON.stringify({ status: status, updatedAt: new Date().toISOString() }, null, 2), 'utf8');
+        } catch (e) { }
+    };
+
+    if (fs.existsSync(engineBin) && installStatus === 'success') {
+        sendLog('Phát hiện n8n core (Đã xác minh cấu hình), đang kích hoạt...', 'info');
         engineProcess = spawn(nodePath, [engineBin, 'start'], { env, cwd: appConfig.ENGINE_USER_FOLDER });
     } else {
-        sendLog('Chưa tìm thấy nhân n8n core. Bắt đầu tải và cấu hình thư viện cục bộ...', 'warning');
+        saveStatus('installing');
+        sendLog('Chưa cấu hình xong nhân n8n core. Bắt đầu tải và cài đặt n8n package từ server (npm install n8n sqlite3)... Vui lòng đợi trong vài phút.\r\n', 'warning');
         sendLog('Đang chuẩn bị tải thư viện n8n, vui lòng chờ trong giây lát...', 'info');
 
         let npmCmd = 'npm';
@@ -209,6 +226,7 @@ const start = async () => {
 
         const code = await new Promise((r) => installProcess.on('close', r));
         if (code !== 0 || !fs.existsSync(engineBin)) {
+            saveStatus('failed');
             engineStatus = 'error';
             sendStatus();
             sendLog('Cài đặt n8n package thất bại. Vui lòng kiểm tra lại kết nối mạng.', 'error');
@@ -244,13 +262,15 @@ const start = async () => {
     }
 
     if (isReady) {
+        saveStatus('success');
         engineStatus = 'running';
         sendStatus();
         sendLog(`N8N Mini App đã khởi chạy thành công tại http://localhost:${port}`, 'success');
         return { success: true };
     }
 
-    return { success: true, message: 'Process started' };
+    saveStatus('failed');
+    return { success: true, message: 'Process started but not responding' };
 };
 
 const stop = async () => {
