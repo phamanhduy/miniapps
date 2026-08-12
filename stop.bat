@@ -1,2 +1,6 @@
 @echo off
-node "%~dp0n8n-manager.js" stop
+title Stop Chatto Server
+echo Dang dung Chatto Server...
+taskkill /f /im chatto.exe 2>nul
+echo Chatto da dung.
+pause

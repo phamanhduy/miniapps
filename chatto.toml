@@ -1,0 +1,123 @@
+# Chatto Config for local development
+
+[general]
+log_level = 'debug'
+log_format = 'text'
+
+[webserver]
+url = 'http://localhost:4000'
+port = 4000
+allowed_origins = []
+cookie_signing_secret = '3ad5f5f911b6865b1a729335f4544d102a99a2847a3d5076431ed43877dd6bd9'
+cookie_encryption_secret = 'f61dd5e478f0c494bd7cc1d6136d8fd9b1c9cde38677f5c3a04f2ae181fd8464'
+
+[webserver.shields]
+enabled = true
+
+[operator_api]
+enabled = false
+socket_path = './data/operator.sock'
+
+[metrics]
+enabled = true
+bind_address = '127.0.0.1'
+port = 9090
+path = '/metrics'
+
+# Deployment-wide Prometheus exporter. `mise chatto` overrides this port with
+# the workspace base port + 3 so multiple workspaces can run side by side.
+[exporter]
+enabled = true
+bind_address = '127.0.0.1'
+port = 9100
+path = '/metrics'
+# s3_refresh_interval = '15m'
+# s3_timeout = '30s'
+
+[search]
+enabled = true
+
+[search_provider]
+enabled = true
+directory = './data/search'
+languages = ['de', 'en']
+
+[core]
+secret_key = '7f3e0d39031f4ee7e2078aafc785f1969b8f1d4a4ea178a4732cb2096fe7f3bb'
+projection_snapshots = true
+
+[core.assets]
+signing_secret = 'd4fac8f5c710d419dbb05c00381ca1d0fbbeb007d8da4367d00cbfa212758fc1'
+max_upload_size = '25MB'
+
+# Image resize cache (optional). When enabled, resized images are cached in
+# NATS Object Store to avoid re-processing on subsequent requests.
+[core.assets.cache]
+enabled = true
+ttl = '7d'
+
+[[auth.providers]]
+id = 'chatto-hub'
+type = 'oidc'
+label = 'Chatto Hub'
+issuer_url = 'https://chatto.id/realms/chatto-hub'
+client_id = 'chatto-dev'
+client_secret = 'iARXOaPkiIDxdNRX2N9uJmQf0aXIfwUE'
+# request_email defaults to false and keeps the OIDC flow email-less; Chatto
+# will still match accounts by issuer + subject. Set true to request email.
+# request_email = true
+# auto_provision allows unlinked provider identities to create passwordless
+# accounts after an explicit confirmation screen.
+auto_provision = false
+
+[smtp]
+enabled = true
+host = '127.0.0.1'
+port = 1025
+tls = 'opportunistic'
+from = 'chatto-dev@chatto.localhost'
+
+[push]
+enabled = true
+vapid_public_key = 'BKBVYBi1oSQ0rOjiS86KCNa2VfxnH03kON54RUqm3X7Q2JQMBkspTHlgBo27OV3wfcX36cxVyJ2h2I_Zd4Yz_DI'
+vapid_private_key = 'rOYtIsUZwE3_91odhvbJX7W6sEFjxCAPeC1FO3CtPEc'
+vapid_subject = 'mailto:dev@chatto.run'
+
+[video]
+enabled = true
+
+[asset_processing]
+enabled = true
+
+# LiveKit voice calls. For local development, run `mise dev-livekit`.
+[livekit]
+enabled = true
+url = 'ws://localhost:7880'
+api_key = 'devkey'
+api_secret = 'devsecret'
+
+[nats.embedded]
+enabled = true
+port = 4555
+# http_port = 8555
+data_dir = './data'
+auth_token = 'd5ed70d13c4682609dfd0a4f65bf7e59ef22f3be8502762b501d3b7cf0b73b43'
+
+# Dev-only bootstrap. Creates these users + the initial instance only when the
+# server is otherwise empty. Plaintext passwords are fine because release
+# binaries don't compile this code path.
+[[bootstrap.users]]
+login = 'alice'
+display_name = 'Alice'
+email = 'alice@example.com'
+password = 'foobar123'
+server_role = 'owner'
+
+[[bootstrap.users]]
+login = 'bob'
+display_name = 'Bob'
+email = 'bob@example.com'
+password = 'foobar123'
+
+[bootstrap.server]
+name = 'Local Development'
