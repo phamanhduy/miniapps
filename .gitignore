@@ -1,0 +1,9 @@
+# Runtime data - khong commit len git
+data/
+
+# File .env chua secret - moi may tu tao rieng
+# .env  <- BO COMMENT nay neu ban muon ignore .env
+
+# OS
+.DS_Store
+Thumbs.db
