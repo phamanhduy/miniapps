@@ -62,6 +62,9 @@ if !errorlevel! equ 0 (
 )
 
 :start_app
+:: Ensure hotdir directory exists in collector
+if not exist "%~dp0collector\hotdir" mkdir "%~dp0collector\hotdir"
+
 :: Start Document Collector on port 8888 (running in background)
 echo Starting Document Collector on port 8888...
 cd /d "%~dp0"
