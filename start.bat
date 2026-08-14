@@ -9,20 +9,20 @@ set "APP_NAME=Chatto"
 if exist ".env" (
     for /f "usebackq tokens=1,* delims==" %%a in (".env") do (
         set "line=%%a"
-        if not "~0,1line"=="" (
+        if not "!line:~0,1!"=="#" if not "!line!"=="" (
             set "%%a=%%b"
         )
     )
 )
 
-:: Truyen PORT vao Chatto qua bien moi truong
-set "CHATTO_WEBSERVER_PORT="
-set "CHATTO_WEBSERVER_URL=http://localhost:"
+:: Truyen PORT va URL vao Chatto qua bien moi truong
+set "CHATTO_WEBSERVER_PORT=!PORT!"
+if "!CHATTO_WEBSERVER_URL!"=="" set "CHATTO_WEBSERVER_URL=http://localhost:!PORT!"
 
 echo ============================================================
-echo    SERVER
+echo   !APP_NAME! SERVER
 echo ============================================================
-echo   Dia chi truy cap: http://localhost:
+echo   Dia chi truy cap: !CHATTO_WEBSERVER_URL!
 echo   Tai khoan mac dinh:
 echo     Alice - login: alice / password: foobar123 (Owner)
 echo     Bob   - login: bob   / password: foobar123
